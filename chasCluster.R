@@ -21,4 +21,6 @@ points(clusteredData$centers, pch=3, cex=2)
 
 ### unreliable value ###
 
-#Cluster with POPC
+#Cluster with PCA
+res.pca <- prcomp(Boston, scale = FALSE)
+fviz_eig(res.pca)

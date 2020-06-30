@@ -8,7 +8,10 @@ Boston <- read.csv("Boston.csv")
 
 #rm(Boston)
 #na.omit ( Hitters )
-
+#Remove unnecessary column
+cor(Boston)
+plot(Boston)
+Boston [ , "X" ] = list ( NULL )
 head(Boston, n = 5)
 summary(Boston)
 
@@ -18,12 +21,12 @@ plot(Boston)
 
 baseLinearModel <- lm(medv ~ . , data= Boston)
 #better R-Square
-prevLinearModel <- lm(medv ~ . - X - indus - age, data = Boston)
+prevLinearModel <- lm(medv ~ . - indus - age - tax - zn - rad - crim, data = Boston)
 #--------------#
 linearModel <- lm(medv ~ lstat + chas + ptratio + dis + zn + nox + black
                   + rm  + rad, data = Boston)
 #glm Model
-glmModel <- glm(medv ~ . - X - indus - age, data = Boston)
+glmModel <- glm(medv ~ . - indus - age, data = Boston)
 summary(baseLinearModel)
 summary(linearModel)
 summary(prevLinearModel)
@@ -40,11 +43,8 @@ dataForTrain = subset(Boston, splitData == TRUE)
 dataForTest = subset(Boston, splitData == FALSE)
 
 #4. Create Predict Model
-predictModel <- glm(medv ~ . - X - indus - age, data = dataForTrain)
-predictTrain = predict(predictModel, type="response")
+predictModel <- glm(medv ~ . - indus - age, data = dataForTrain)
+predictTrain <- predict(predictModel, type="response")
 
 #5. Analyze the Model
 summary(predictTrain)
-
-#Chas clustering
-View(Boston$chas)
