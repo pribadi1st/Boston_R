@@ -1,36 +1,44 @@
 #import all necessary libraries
-library ( tree )
-library( ggplot2 )
+#library ( tree )
+#library( ggplot2 )
 library ( caret )
 library (caTools)
+library (relaimpo)
 
 Boston <- read.csv("Boston.csv")
 
 #rm(Boston)
 #na.omit ( Hitters )
 #Remove unnecessary column
-cor(Boston)
-plot(Boston)
+#cor(Boston)
+#plot(Boston)
 Boston [ , "X" ] = list ( NULL )
 head(Boston, n = 5)
-summary(Boston)
 
 #check correlation first
 cor(Boston)
 plot(Boston)
+pairs ( Boston [ c ( "chas", "nox", "rm", "dis", "ptratio", "black", "lstat") ] )
 
+#Find best model
 baseLinearModel <- lm(medv ~ . , data= Boston)
 #better R-Square
-prevLinearModel <- lm(medv ~ . - indus - age - tax - zn - rad - crim, data = Boston)
+testLinearModel <- lm(medv ~ . - indus - age - tax - zn - rad - crim, data = Boston)
 #--------------#
 linearModel <- lm(medv ~ lstat + chas + ptratio + dis + zn + nox + black
                   + rm  + rad, data = Boston)
-#glm Model
-glmModel <- glm(medv ~ . - indus - age, data = Boston)
-summary(baseLinearModel)
-summary(linearModel)
-summary(prevLinearModel)
-summary(glmModel)
+
+# Relative importance of variables
+testModel <- calc.relimp (testLinearModel, type = "lmg" )
+testModel
+sum ( testModel$lmg )
+
+barplot ( sort ( testModel$lmg, decreasing = TRUE ), 
+          col = c ( 2:10 ), main = "Relative Importance of Predictors", 
+          xlab = "Predictor Labels", ylab = "Shapley Value Regression", 
+          font.lab = 2 )
+
+
 
 #Create prediction test
 
@@ -42,9 +50,9 @@ View(splitData)
 dataForTrain = subset(Boston, splitData == TRUE)
 dataForTest = subset(Boston, splitData == FALSE)
 
-#4. Create Predict Model
-predictModel <- glm(medv ~ . - indus - age, data = dataForTrain)
-predictTrain <- predict(predictModel, type="response")
+#4. Check error for test data
+sqrt (mean ( ( dataForTest$medv - predict.lm ( testLinearModel, dataForTest ) ) ^ 2 ))
 
-#5. Analyze the Model
-summary(predictTrain)
+#check using RMSE
+predictionsModel = predict ( testLinearModel, dataForTest)
+RMSE (predictionsModel, dataForTest$medv)
