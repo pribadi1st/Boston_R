@@ -38,8 +38,6 @@ barplot ( sort ( testModel$lmg, decreasing = TRUE ),
           xlab = "Predictor Labels", ylab = "Shapley Value Regression", 
           font.lab = 2 )
 
-
-
 #Create prediction test
 
 #1. set split ratio

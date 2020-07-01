@@ -74,6 +74,9 @@ predictTest = predict ( lrm, type = "response", newdata = testDataSet )
 
 table ( testDataSet$chas, predictTest > 0.5 )
 
+# Baseline accuracy
+1 - mean ( Boston$chas ) 
+
 ROCRpred <- prediction ( predictTest, testDataSet$chas )
 as.numeric ( performance ( ROCRpred, "auc" ) @y.values )
 ROCRperf = performance ( ROCRpred, "tpr", "fpr" )
