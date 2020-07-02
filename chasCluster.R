@@ -41,8 +41,8 @@ trainDataSet = subset(Boston, splitDataSet == TRUE)
 testDataSet = subset(Boston, splitDataSet == FALSE)
 
 #visualize data set
-View(trainDataSet)
-cormat <- cor(trainDataSet)
+#View(trainDataSet)
+cormat <- cor(trainDataSet[,-4])
 corrplot(cormat,method='number')
 # Find high correlation variable
 # Nox & rad | rad & tax | age & rad
@@ -66,8 +66,8 @@ p12<-ggplot(data = trainDataSet,aes(x = chas,y = lstat,fill=chas))+geom_boxplot(
 p13<-ggplot(data = trainDataSet,aes(x = chas,y = medv,fill=chas))+geom_boxplot()
 grid.arrange(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,nrow=3)
 
-#create the model
-#lrm <- glm ( chas ~ rm + tax + indus , data = trainDataSet, family = binomial )
+#create the glm model
+lrm <- glm ( chas ~ rm + dis + indus + lstat, data = trainDataSet, family = binomial )
 lrm <- glm ( chas ~ . - crim - zn - black, data = trainDataSet, family = binomial )
 summary(lrm)
 predictTest = predict ( lrm, type = "response", newdata = testDataSet )
@@ -99,4 +99,5 @@ plot ( hclust ( dist ( xsc ), method = "single" ), main = "Hierarchical Clusteri
 
 #predict
 treePart = rpart ( chas ~ . - crim - zn - black , data = trainDataSet )
+treePart = rpart ( chas ~ rm + dis + indus + lstat , data = trainDataSet )
 rpart.plot ( treePart )

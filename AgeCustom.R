@@ -21,7 +21,7 @@ trainDataSet$older90 <- as.factor(trainDataSet$older90)
 
 cormat <- cor(trainDataSet[, -15])
 corrplot(cormat,method='number')
-cor(trainDataSet)
+#cor(trainDataSet)
 
 #check plot
 p1<-ggplot(data = trainDataSet,aes(x = older90,y = crim,fill=older90))+geom_boxplot()
@@ -40,14 +40,14 @@ p13<-ggplot(data = trainDataSet,aes(x = older90,y = medv,fill=older90))+geom_box
 grid.arrange(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,nrow=3)
 # ----- #
 
-modelSet = glm ( older90 ~ dis + zn + indus + lstat + medv + black , data = trainDataSet, family = binomial )
-modelSet2 = glm ( older90 ~ medv + rm , data = trainDataSet, family = binomial )
-summary(modelSet2)
+modelSet = glm ( older90 ~ dis + indus + lstat + medv , data = trainDataSet, family = binomial )
+modelSet2 = glm ( older90 ~ indus + nox + tax + rad + lstat + medv , data = trainDataSet, family = binomial )
+summary(modelSet)
 predictTest = predict ( modelSet, type = "response", newdata = testDataSet )
 table ( testDataSet$older90, predictTest > 0.5 )
 
 # Baseline accuracy
-1 - mean ( Boston$chas ) 
+1 - mean ( Boston$older90 ) 
 
 ROCRpred <- prediction ( predictTest, testDataSet$older90 )
 as.numeric ( performance ( ROCRpred, "auc" ) @y.values )
@@ -65,11 +65,13 @@ plot ( hc.average , main = " Average Linkage ", xlab= "", sub = "", cex = .9 )
 plot ( hc.single , main =" Single Linkage ", xlab= "", sub ="", cex = .9 )
 
 ##scaling
-xsc = scale ( trainDataSet )
+xsc = scale ( trainDataSet[,-15] )
 par ( mfrow = c ( 1, 1 ) )
 plot ( hclust ( dist ( xsc ), method = "single" ), main = "Hierarchical Clustering with Scaled Features")
 
 #predict
 treePart = rpart ( older90 ~ dis + indus + lstat + medv , data = trainDataSet )
+#model 2
+treePart = rpart ( older90 ~ indus + nox + tax + rad + lstat + medv , data = trainDataSet )
 rpart.plot ( treePart )
 

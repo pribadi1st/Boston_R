@@ -1,7 +1,7 @@
 #import all necessary libraries
 #library ( tree )
 #library( ggplot2 )
-library ( caret )
+library (caret)
 library (caTools)
 library (relaimpo)
 
@@ -27,6 +27,10 @@ testLinearModel <- lm(medv ~ . - indus - age - tax - zn - rad - crim, data = Bos
 #--------------#
 linearModel <- lm(medv ~ lstat + chas + ptratio + dis + zn + nox + black
                   + rm  + rad, data = Boston)
+summary(testLinearModel)
+#interaction model
+interactionModel <- lm(medv ~ I(lstat ^ 2)+ rm + tax + lstat, data= Boston)
+summary(interactionModel)
 
 # Relative importance of variables
 testModel <- calc.relimp (testLinearModel, type = "lmg" )
@@ -49,8 +53,8 @@ dataForTrain = subset(Boston, splitData == TRUE)
 dataForTest = subset(Boston, splitData == FALSE)
 
 #4. Check error for test data
-sqrt (mean ( ( dataForTest$medv - predict.lm ( testLinearModel, dataForTest ) ) ^ 2 ))
+sqrt (mean ( ( dataForTest$medv - predict.lm ( interactionModel, dataForTest ) ) ^ 2 ))
 
 #check using RMSE
-predictionsModel = predict ( testLinearModel, dataForTest)
+predictionsModel = predict ( interactionModel, dataForTest)
 RMSE (predictionsModel, dataForTest$medv)
