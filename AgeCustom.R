@@ -45,11 +45,14 @@ baseModel = glm ( older90 ~ . - age , data = trainDataSet, family = binomial )
 modelSet = glm ( older90 ~ dis + indus + lstat + medv , data = trainDataSet, family = binomial )
 modelSet2 = glm ( older90 ~ indus + nox + tax + rad + lstat + medv , data = trainDataSet, family = binomial )
 summary(modelSet2)
-predictTest = predict ( baseModel, type = "response", newdata = testDataSet )
+summary(baseModel)
+summary(modelSet)
+predictTest = predict ( modelSet, type = "response", newdata = testDataSet )
 table ( testDataSet$older90, predictTest > 0.5 )
 
 # Baseline accuracy
-1 - mean ( Boston$older90 ) 
+# Don't use as.factor yet
+1 - mean ( Boston$age )
 
 ROCRpred <- prediction ( predictTest, testDataSet$older90 )
 as.numeric ( performance ( ROCRpred, "auc" ) @y.values )
@@ -80,3 +83,6 @@ treePart = rpart ( older90 ~ dis + indus + lstat + medv , data = trainDataSet )
 treePart = rpart ( older90 ~ indus + nox + tax + rad + lstat + medv , data = trainDataSet )
 rpart.plot ( treePart )
 
+#Accuracy
+tree.pred = predict (treePart, testDataSet, type = "class" )
+summary(tree.pred)

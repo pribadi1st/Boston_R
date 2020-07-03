@@ -88,7 +88,7 @@ predictTest <- predict ( lrm, type = "response", newdata = testDataSet )
 table ( testDataSet$chas, predictTest > 0.5 )
 
 # Baseline accuracy
-1 - mean ( baseModel$chas ) 
+1 - mean ( Boston$chas ) 
 
 ROCRpred <- prediction ( predictTest, testDataSet$chas )
 as.numeric ( performance ( ROCRpred, "auc" ) @y.values )
@@ -114,3 +114,6 @@ plot ( hclust ( dist ( xsc ), method = "single" ), main = "Hierarchical Clusteri
 treePart = rpart ( chas ~ . , data = trainDataSet ) # base model
 treePart = rpart ( chas ~ indus + rad + tax + ptratio , data = trainDataSet ) # Model 1
 rpart.plot ( treePart )
+
+tree.pred = predict (treePart, testDataSet, type = "class" )
+summary(tree.pred)
