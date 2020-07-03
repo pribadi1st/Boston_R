@@ -34,15 +34,15 @@ linearModel <- lm(medv ~ lstat + chas + ptratio + dis + zn + nox + black
                   + rm  + rad, data = Boston)
 summary(testLinearModel)
 #interaction model
-#Abhisek as to fabio
+#Abhisek explain this
 interactionModel <- lm(medv ~ I(lstat ^ 2)+ rm + tax + lstat, data= Boston)
 summary(interactionModel)
 
 # Relative importance of variables
-interactionModel <- calc.relimp (interactionModel, type = "lmg" )
+rmModel <- calc.relimp (testLinearModel, type = "lmg" )
 sum ( interactionModel$lmg )
 
-barplot ( sort ( interactionModel$lmg, decreasing = TRUE ), 
+barplot ( sort ( rmModel$lmg, decreasing = TRUE ), 
           col = c ( 2:10 ), main = "Relative Importance of Predictors", 
           xlab = "Predictor Labels", ylab = "Shapley Value Regression", 
           font.lab = 2 )
@@ -60,7 +60,7 @@ dataForTest <- subset(Boston, splitData == FALSE)
 
 #4. Check error for test data
 #Root mean square E
-sqrt (mean ( ( dataForTest$medv - predict.lm ( interactionModel, dataForTest ) ) ^ 2 ))
+sqrt (mean ( ( dataForTest$medv - predict.lm ( testLinearModel, dataForTest ) ) ^ 2 ))
 
 #check using RMSE
 predictionsModel <- predict ( interactionModel, dataForTest)

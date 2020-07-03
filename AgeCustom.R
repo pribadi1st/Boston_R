@@ -7,7 +7,7 @@ library(rpart)
 library(rpart.plot)
 library(gridExtra)
 
-Boston$older90 <- ifelse(Boston$age <= 90, 0, 1)
+Boston$older90 <- ifelse(Boston$age <= 90, "Younger equal than 90", "Older than 90")
 
 Boston [ , "X" ] = list ( NULL )
 
@@ -40,10 +40,12 @@ p13<-ggplot(data = trainDataSet,aes(x = older90,y = medv,fill=older90))+geom_box
 grid.arrange(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,nrow=3)
 # ----- #
 
+#Base Model
+baseModel = glm ( older90 ~ . - age , data = trainDataSet, family = binomial )
 modelSet = glm ( older90 ~ dis + indus + lstat + medv , data = trainDataSet, family = binomial )
 modelSet2 = glm ( older90 ~ indus + nox + tax + rad + lstat + medv , data = trainDataSet, family = binomial )
-summary(modelSet)
-predictTest = predict ( modelSet, type = "response", newdata = testDataSet )
+summary(modelSet2)
+predictTest = predict ( baseModel, type = "response", newdata = testDataSet )
 table ( testDataSet$older90, predictTest > 0.5 )
 
 # Baseline accuracy
@@ -70,6 +72,9 @@ par ( mfrow = c ( 1, 1 ) )
 plot ( hclust ( dist ( xsc ), method = "single" ), main = "Hierarchical Clustering with Scaled Features")
 
 #predict
+#Base Model
+treePart = rpart ( older90 ~ . - age + indus + lstat + medv , data = trainDataSet )
+#model 1
 treePart = rpart ( older90 ~ dis + indus + lstat + medv , data = trainDataSet )
 #model 2
 treePart = rpart ( older90 ~ indus + nox + tax + rad + lstat + medv , data = trainDataSet )

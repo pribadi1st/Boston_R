@@ -13,6 +13,7 @@ library ( rpart.plot )
 
 
 Boston [ , "X" ] = list ( NULL )
+str(Boston)
 
 #check optimasisasi cluster
 kmax <- 10
@@ -32,6 +33,8 @@ points(clusteredData$centers, pch=3, cex=2)
 ### unreliable value ###
 
 #Cluster with Binary Classification
+Boston[Boston$chas == 0 ,]$chas <- "farFromRiver"
+Boston[Boston$chas == 1 ,]$chas <- "closeFromRiver"
 Boston$chas <- as.factor(Boston$chas) 
 #To find how many 0 / 1 we have for chas
 summary(Boston)
@@ -48,7 +51,7 @@ testDataSet = subset(Boston, splitDataSet == FALSE)
 cormat <- cor(trainDataSet[,-4])
 corrplot(cormat,method='number')
 # Find high correlation variable
-# Nox & dis | rad & tax | age & rad
+# Nox & dis | rad & tax | age & dis
 p1 <- ggplot(data = trainDataSet,aes(nox,rad,col=chas))+geom_point(alpha=0.5)
 p2 <- ggplot(data = trainDataSet,aes(tax,rad,col=chas))+geom_point(alpha=0.5)
 p3 <- ggplot(data = trainDataSet,aes(age,rad,col=chas))+geom_point(alpha=0.5)
@@ -71,15 +74,21 @@ p13<-ggplot(data = trainDataSet,aes(x = chas,y = medv,fill=chas))+geom_boxplot()
 grid.arrange(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,nrow=3)
 
 #create the glm model
-lrm <- glm ( chas ~ rm + dis + indus + lstat, data = trainDataSet, family = binomial )
-lrm <- glm ( chas ~ . - crim - zn - black, data = trainDataSet, family = binomial )
+# Nox & dis | rad & tax | age & dis
+#model1 <- glm( chas ~ indus + tax + rad, trainDataSet, family = binomial)
+#lrm <- glm ( chas ~ rm + dis + indus + lstat, data = trainDataSet, family = binomial )
+#lrm <- glm ( chas ~ . - crim - zn - black, data = trainDataSet, family = binomial )
+#model 1
+lrm <- glm ( chas ~ indus + rad + tax + ptratio, data = trainDataSet, family = binomial )
+#base model
+baseModel <- glm(chas ~ ., trainDataSet, family= binomial)
 summary(lrm)
 predictTest <- predict ( lrm, type = "response", newdata = testDataSet )
 
-table ( testDataSet$chas, predictTest > 0.1 )
+table ( testDataSet$chas, predictTest > 0.5 )
 
 # Baseline accuracy
-1 - mean ( Boston$chas ) 
+1 - mean ( baseModel$chas ) 
 
 ROCRpred <- prediction ( predictTest, testDataSet$chas )
 as.numeric ( performance ( ROCRpred, "auc" ) @y.values )
@@ -102,6 +111,6 @@ par ( mfrow <- c ( 1, 1 ) )
 plot ( hclust ( dist ( xsc ), method = "single" ), main = "Hierarchical Clustering with Scaled Features")
 
 #predict
-treePart = rpart ( chas ~ . - crim - zn - black - medv , data = trainDataSet )
-treePart = rpart ( chas ~ rm + dis + indus + lstat , data = trainDataSet )
+treePart = rpart ( chas ~ . , data = trainDataSet ) # base model
+treePart = rpart ( chas ~ indus + rad + tax + ptratio , data = trainDataSet ) # Model 1
 rpart.plot ( treePart )
