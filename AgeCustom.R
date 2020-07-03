@@ -52,7 +52,7 @@ table ( testDataSet$older90, predictTest > 0.5 )
 
 # Baseline accuracy
 # Don't use as.factor yet
-1 - mean ( Boston$age )
+1 - mean ( Boston$older )
 
 ROCRpred <- prediction ( predictTest, testDataSet$older90 )
 as.numeric ( performance ( ROCRpred, "auc" ) @y.values )

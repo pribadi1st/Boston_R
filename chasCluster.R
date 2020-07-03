@@ -15,7 +15,8 @@ library ( rpart.plot )
 Boston [ , "X" ] = list ( NULL )
 str(Boston)
 
-#check optimasisasi cluster
+#check optimasisasi cluster using kmeans
+#Unused
 kmax <- 10
 optimizeClusterNumber <- sapply(1:kmax, function(k) kmeans(scaledData, centers = k, nstart = 10)$tot.withinss)
 
@@ -29,7 +30,6 @@ clusteredData <- kmeans(scaledData, centers = 4, nstart = 50)
 #Visualize cluster
 plot(x=scaledData[,1], y=scaledData[,2], col=clusteredData$cluster)
 points(clusteredData$centers, pch=3, cex=2)
-
 ### unreliable value ###
 
 #Cluster with Binary Classification
@@ -78,9 +78,9 @@ grid.arrange(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,nrow=3)
 #model1 <- glm( chas ~ indus + tax + rad, trainDataSet, family = binomial)
 #lrm <- glm ( chas ~ rm + dis + indus + lstat, data = trainDataSet, family = binomial )
 #lrm <- glm ( chas ~ . - crim - zn - black, data = trainDataSet, family = binomial )
-#model 1
+#Model 1
 lrm <- glm ( chas ~ indus + rad + tax + ptratio, data = trainDataSet, family = binomial )
-#base model
+#Base Model
 baseModel <- glm(chas ~ ., trainDataSet, family= binomial)
 summary(lrm)
 predictTest <- predict ( lrm, type = "response", newdata = testDataSet )
@@ -105,7 +105,7 @@ plot ( hc.complete , main = " Complete Linkage ", xlab= "", sub = "" )
 plot ( hc.average , main = " Average Linkage ", xlab= "", sub = "", cex = .9 )
 plot ( hc.single , main =" Single Linkage ", xlab= "", sub ="", cex = .9 )
 
-##scaling
+##Test scaling
 xsc = scale ( trainDataSet )
 par ( mfrow <- c ( 1, 1 ) )
 plot ( hclust ( dist ( xsc ), method = "single" ), main = "Hierarchical Clustering with Scaled Features")
