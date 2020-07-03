@@ -76,13 +76,13 @@ plot ( hclust ( dist ( xsc ), method = "single" ), main = "Hierarchical Clusteri
 
 #predict
 #Base Model
-treePart = rpart ( older90 ~ . - age + indus + lstat + medv , data = trainDataSet )
+treePart1 = rpart ( older90 ~ . - age + indus + lstat + medv , data = trainDataSet )
 #model 1
-treePart = rpart ( older90 ~ dis + indus + lstat + medv , data = trainDataSet )
+treePart2 = rpart ( older90 ~ dis + indus + lstat + medv , data = trainDataSet )
 #model 2
-treePart = rpart ( older90 ~ indus + nox + tax + rad + lstat + medv , data = trainDataSet )
-rpart.plot ( treePart )
+treePart3 = rpart ( older90 ~ indus + nox + tax + rad + lstat + medv , data = trainDataSet )
+rpart.plot ( treePart1 )
 
 #Accuracy
-tree.pred = predict (treePart, testDataSet, type = "class" )
+tree.pred = predict (treePart1, testDataSet, type = "class" )
 summary(tree.pred)

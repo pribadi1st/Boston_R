@@ -85,7 +85,7 @@ baseModel <- glm(chas ~ ., trainDataSet, family= binomial)
 summary(lrm)
 predictTest <- predict ( lrm, type = "response", newdata = testDataSet )
 
-table ( testDataSet$chas, predictTest > 0.5 )
+table ( testDataSet$chas, predictTest > 0.9 )
 
 # Baseline accuracy
 1 - mean ( Boston$chas ) 
@@ -111,9 +111,9 @@ par ( mfrow <- c ( 1, 1 ) )
 plot ( hclust ( dist ( xsc ), method = "single" ), main = "Hierarchical Clustering with Scaled Features")
 
 #predict
-treePart = rpart ( chas ~ . , data = trainDataSet ) # base model
-treePart = rpart ( chas ~ indus + rad + tax + ptratio , data = trainDataSet ) # Model 1
-rpart.plot ( treePart )
+treePart1 = rpart ( chas ~ . , data = trainDataSet ) # base model
+treePart2 = rpart ( chas ~ indus + rad + tax + ptratio , data = trainDataSet ) # Model 1
+rpart.plot ( treePart1 )
 
-tree.pred = predict (treePart, testDataSet, type = "class" )
+tree.pred = predict (treePart1, testDataSet, type = "class" )
 summary(tree.pred)
